@@ -5,7 +5,7 @@ class Node {
 
     }
 
-    node.prototype.isLeaf = function() { return false; };
+    isLeaf = function() { return false; };
 
     getItem(key) {
         var vals = this.keyval;
@@ -35,7 +35,7 @@ class Node {
 
     split() {
         var mov = Math.ceil(this.keyval.length / 2) - 1;
-        var newN = new node();
+        var newN = new Node();
         newN.nodptr[mov] = this.nodptr.pop();
         for (var i = mov - 1; i >= 0; i--) {
             newN.keyval[i] = this.keyval.pop();
@@ -44,7 +44,7 @@ class Node {
         return newN;
     };
 
-    merge = (frNod, paNod, paItm) {
+    merge(frNod, paNod, paItm) {
         var del = paNod.keyval[paItm];
         this.keyval.push(del);
         for (var i = 0, len = frNod.keyval.length; i < len; i++) {

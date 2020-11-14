@@ -1,6 +1,9 @@
+// import {Leaf} from './Leaf.js'
+// import {Node} from './Node.js'
+
 class Btree {
     constructor(order) {
-        this.root = new leaf()
+        this.root = new Leaf()
         this.maxkey = order - 1
         this.minkey1 = Math.floor(order / 2)
         this.minkeyn = Math.floor(this.maxkey / 2)
@@ -40,12 +43,12 @@ class Btree {
                 var ky = pR.keyval[0];
                 this.item = this.leaf.getItem(key, false);
                 if (this.item === -1) {
-                    this.leaf = this.leaf.nextLf;
+                    this.leaf = this.leaf.nextLeaf;
                     this.item = this.leaf.getItem(key, false);
                 }
                 while (true) {
                     if (stack.length === 0) {
-                        var newN = new node();
+                        var newN = new Node();
                         newN.keyval[0] = ky;
                         newN.nodptr[0] = pL;
                         newN.nodptr[1] = pR;
@@ -94,8 +97,8 @@ class Btree {
             this.leaf = this.leaf.nodptr[this.item];
         }
         this.item = this.leaf.getItem(key, near);
-        if (near && this.item == -1 && this.leaf.nextLf !== null) {
-            this.leaf = this.leaf.nextLf;
+        if (near && this.item == -1 && this.leaf.nextLeaf !== null) {
+            this.leaf = this.leaf.nextLeaf;
             this.item = 0;
         }
         if (this.item === -1) {
@@ -118,7 +121,7 @@ class Btree {
         if (cnt > 0) {
             while (!this.eof && this.leaf.keyval.length - this.item - 1 < cnt) {
                 cnt = cnt - this.leaf.keyval.length + this.item;
-                this.leaf = this.leaf.nextLf;
+                this.leaf = this.leaf.nextLeaf;
                 if (this.leaf === null) this.eof = true;
                 else this.item = 0;
             }
@@ -127,7 +130,7 @@ class Btree {
             cnt = -cnt;
             while (!this.eof && this.item < cnt) {
                 cnt = cnt - this.item - 1;
-                this.leaf = this.leaf.prevLf;
+                this.leaf = this.leaf.prevLeaf;
                 if (this.leaf === null) this.eof = true;
                 else this.item = this.leaf.keyval.length - 1;
             }
@@ -161,8 +164,8 @@ class Btree {
         if (this.leaf === null || this.item === -1) return -1;
         var cnt = this.item + 1;
         var ptr = this.leaf;
-        while (ptr.prevLf !== null) {
-            ptr = ptr.prevLf;
+        while (ptr.prevLeaf !== null) {
+            ptr = ptr.prevLeaf;
             cnt += ptr.keyval.length;
         }
         return cnt;
@@ -226,16 +229,16 @@ class Btree {
             toN.recnum[toI] = frN.recnum[frI];
             if (toI === 0) parNod.push(toN);
             if (frI == frN.keyval.length - 1) {
-                if (frN.nextLf === null) break;
-                frN = frN.nextLf;
+                if (frN.nextLeaf === null) break;
+                frN = frN.nextLeaf;
                 frI = 0;
             } else {
                 frI++;
             }
             if (toI == this.maxkey - 1) {
                 var tmp = new leaf();
-                toN.nextLf = tmp;
-                tmp.prevLf = toN;
+                toN.nextLeaf = tmp;
+                tmp.prevLeaf = toN;
                 toN = tmp;
                 toI = 0;
             } else {
@@ -243,7 +246,7 @@ class Btree {
             }
         }
         var mov = this.minkyl - toN.keyval.length;
-        frN = toN.prevLf;
+        frN = toN.prevLeaf;
         if (mov > 0 && frN !== null) {
             for (var i = toN.keyval.length - 1; i >= 0; i--) {
                 toN.keyval[i + mov] = toN.keyval[i];
@@ -269,7 +272,7 @@ class Btree {
             var toI = this.maxkey + 1;
             for (var i = 0, len = kidKey.length; i < len; i++) {
                 if (toI > this.maxkey) {
-                    toN = new node();
+                    toN = new Node();
                     toI = 0;
                     parNod.push(toN);
                 }

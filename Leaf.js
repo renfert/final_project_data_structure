@@ -50,15 +50,15 @@ class Leaf {
 
     split() {
         var mov = Math.floor(this.keyval.length / 2);
-        var newL = new leaf();
+        var newL = new Leaf();
         for (var i = mov - 1; i >= 0; i--) {
             newL.keyval[i] = this.keyval.pop();
             newL.recnum[i] = this.recnum.pop();
         }
-        newL.prevLf = this;
-        newL.nextLf = this.nextLf;
-        if (this.nextLf !== null) this.nextLf.prevLf = newL;
-        this.nextLf = newL;
+        newL.prevLeaf = this;
+        newL.nextLeaf = this.nextLeaf;
+        if (this.nextLeaf !== null) this.nextLeaf.prevLeaf = newL;
+        this.nextLeaf = newL;
         return newL;
     };
 
@@ -68,9 +68,9 @@ class Leaf {
             this.recnum.push(frNod.recnum[i]);
         }
         this.nextLf = frNod.nextLf;
-        if (frNod.nextLf !== null) frNod.nextLf.prevLf = this;
-        frNod.prevLf = null;
-        frNod.nextLf = null;
+        if (frNod.nextLeaf !== null) frNod.nextLeaf.prevLeaf = this;
+        frNod.prevLeaf = null;
+        frNod.nextLeaf = null;
         var itm = paNod.keyval.length - 1;
         for (var i = itm; i >= 0; i--) {
             if (paNod.keyval[i] == frKey) {
