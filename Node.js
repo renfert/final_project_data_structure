@@ -1,14 +1,14 @@
 class Node {
     constructor() {
-        this.keyval = []
-        this.nodptr = []
+        this.name = []
+        this.children = []
 
     }
 
     isLeaf = function() { return false; };
 
     getItem(key) {
-        var vals = this.keyval;
+        var vals = this.name;
         for (var i = 0, len = vals.length; i < len; i++) {
             if (key < vals[i]) return i;
         }
@@ -16,7 +16,7 @@ class Node {
     };
 
     addKey(key, ptrL, ptrR) {
-        var vals = this.keyval;
+        var vals = this.name;
         var itm = vals.length;
         for (var i = 0, len = vals.length; i < len; i++) {
             if (key <= vals[i]) {
@@ -26,38 +26,38 @@ class Node {
         }
         for (var i = vals.length; i > itm; i--) {
             vals[i] = vals[i - 1];
-            this.nodptr[i + 1] = this.nodptr[i];
+            this.children[i + 1] = this.children[i];
         }
         vals[itm] = key;
-        this.nodptr[itm] = ptrL;
-        this.nodptr[itm + 1] = ptrR;
+        this.children[itm] = ptrL;
+        this.children[itm + 1] = ptrR;
     };
 
     split() {
-        var mov = Math.ceil(this.keyval.length / 2) - 1;
+        var mov = Math.ceil(this.name.length / 2) - 1;
         var newN = new Node();
-        newN.nodptr[mov] = this.nodptr.pop();
+        newN.children[mov] = this.children.pop();
         for (var i = mov - 1; i >= 0; i--) {
-            newN.keyval[i] = this.keyval.pop();
-            newN.nodptr[i] = this.nodptr.pop();
+            newN.name[i] = this.name.pop();
+            newN.children[i] = this.children.pop();
         }
         return newN;
     };
 
     merge(frNod, paNod, paItm) {
-        var del = paNod.keyval[paItm];
-        this.keyval.push(del);
-        for (var i = 0, len = frNod.keyval.length; i < len; i++) {
-            this.keyval.push(frNod.keyval[i]);
-            this.nodptr.push(frNod.nodptr[i]);
+        var del = paNod.name[paItm];
+        this.name.push(del);
+        for (var i = 0, len = frNod.name.length; i < len; i++) {
+            this.name.push(frNod.name[i]);
+            this.children.push(frNod.children[i]);
         }
-        this.nodptr.push(frNod.nodptr[frNod.nodptr.length - 1]);
-        for (var i = paItm, len = paNod.keyval.length - 1; i < len; i++) {
-            paNod.keyval[i] = paNod.keyval[i + 1];
-            paNod.nodptr[i + 1] = paNod.nodptr[i + 2];
+        this.children.push(frNod.children[frNod.children.length - 1]);
+        for (var i = paItm, len = paNod.name.length - 1; i < len; i++) {
+            paNod.name[i] = paNod.name[i + 1];
+            paNod.children[i + 1] = paNod.children[i + 2];
         }
-        paNod.keyval.pop();
-        paNod.nodptr.pop();
+        paNod.name.pop();
+        paNod.children.pop();
         return del;
     };
 }

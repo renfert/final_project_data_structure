@@ -10,7 +10,7 @@ class Btree {
         this.leaf = null
         this.item = -1
 
-        this.keyval = ''
+        this.name = ''
         this.recnum = -1
         this.length = 0
         this.eof = true
@@ -24,10 +24,10 @@ class Btree {
         while (!this.leaf.isLeaf()) {
             stack.push(this.leaf);
             this.item = this.leaf.getItem(key);
-            this.leaf = this.leaf.nodptr[this.item];
+            this.leaf = this.leaf.children[this.item];
         }
         this.item = this.leaf.addKey(key, rec);
-        this.keyval = key;
+        this.name = key;
         this.eof = false;
         if (this.item === -1) {
             this.found = true;
@@ -37,10 +37,10 @@ class Btree {
             this.found = false;
             this.recnum = rec;
             this.length++;
-            if (this.leaf.keyval.length > this.maxkey) {
+            if (this.leaf.name.length > this.maxkey) {
                 var pL = this.leaf;
                 var pR = this.leaf.split();
-                var ky = pR.keyval[0];
+                var ky = pR.name[0];
                 this.item = this.leaf.getItem(key, false);
                 if (this.item === -1) {
                     this.leaf = this.leaf.nextLeaf;
@@ -49,18 +49,18 @@ class Btree {
                 while (true) {
                     if (stack.length === 0) {
                         var newN = new Node();
-                        newN.keyval[0] = ky;
-                        newN.nodptr[0] = pL;
-                        newN.nodptr[1] = pR;
+                        newN.name[0] = ky;
+                        newN.children[0] = pL;
+                        newN.children[1] = pR;
                         this.root = newN;
                         break;
                     }
                     var nod = stack.pop();
                     nod.addKey(ky, pL, pR);
-                    if (nod.keyval.length <= this.maxkey) break;
+                    if (nod.name.length <= this.maxkey) break;
                     pL = nod;
                     pR = nod.split();
-                    ky = nod.keyval.pop();
+                    ky = nod.name.pop();
                 }
             }
         }
@@ -74,13 +74,13 @@ class Btree {
                 this.found = false;
                 return false;
             }
-            key = this.leaf.keyval[this.item];
+            key = this.leaf.name[this.item];
         }
         this._del(key);
         if (!this.found) {
             this.item = -1;
             this.eof = true;
-            this.keyval = '';
+            this.name = '';
             this.recnum = -1;
         } else {
             this.seek(key, true);
@@ -94,7 +94,7 @@ class Btree {
         this.leaf = this.root;
         while (!this.leaf.isLeaf()) {
             this.item = this.leaf.getItem(key);
-            this.leaf = this.leaf.nodptr[this.item];
+            this.leaf = this.leaf.children[this.item];
         }
         this.item = this.leaf.getItem(key, near);
         if (near && this.item == -1 && this.leaf.nextLeaf !== null) {
@@ -103,13 +103,13 @@ class Btree {
         }
         if (this.item === -1) {
             this.eof = true;
-            this.keyval = '';
+            this.name = '';
             this.found = false;
             this.recnum = -1;
         } else {
             this.eof = false;
-            this.found = (this.leaf.keyval[this.item] === key);
-            this.keyval = this.leaf.keyval[this.item];
+            this.found = (this.leaf.name[this.item] === key);
+            this.name = this.leaf.name[this.item];
             this.recnum = this.leaf.recnum[this.item];
         }
         return (!this.eof);
@@ -119,8 +119,8 @@ class Btree {
         if (typeof cnt != 'number') cnt = 1;
         if (this.item == -1 || this.leaf === null) this.eof = true;
         if (cnt > 0) {
-            while (!this.eof && this.leaf.keyval.length - this.item - 1 < cnt) {
-                cnt = cnt - this.leaf.keyval.length + this.item;
+            while (!this.eof && this.leaf.name.length - this.item - 1 < cnt) {
+                cnt = cnt - this.leaf.name.length + this.item;
                 this.leaf = this.leaf.nextLeaf;
                 if (this.leaf === null) this.eof = true;
                 else this.item = 0;
@@ -132,18 +132,18 @@ class Btree {
                 cnt = cnt - this.item - 1;
                 this.leaf = this.leaf.prevLeaf;
                 if (this.leaf === null) this.eof = true;
-                else this.item = this.leaf.keyval.length - 1;
+                else this.item = this.leaf.name.length - 1;
             }
             if (!this.eof) this.item = this.item - cnt;
         }
         if (this.eof) {
             this.item = -1;
             this.found = false;
-            this.keyval = '';
+            this.name = '';
             this.recnum = -1;
         } else {
             this.found = true;
-            this.keyval = this.leaf.keyval[this.item];
+            this.name = this.leaf.name[this.item];
             this.recnum = this.leaf.recnum[this.item];
         }
         return (this.found);
@@ -166,7 +166,7 @@ class Btree {
         var ptr = this.leaf;
         while (ptr.prevLeaf !== null) {
             ptr = ptr.prevLeaf;
-            cnt += ptr.keyval.length;
+            cnt += ptr.name.length;
         }
         return cnt;
     };
@@ -174,19 +174,19 @@ class Btree {
     goTop() {
         this.leaf = this.root;
         while (!this.leaf.isLeaf()) {
-            this.leaf = this.leaf.nodptr[0];
+            this.leaf = this.leaf.children[0];
         }
-        if (this.leaf.keyval.length === 0) {
+        if (this.leaf.name.length === 0) {
             this.item = -1;
             this.eof = true;
             this.found = false;
-            this.keyval = '';
+            this.name = '';
             this.recnum = -1;
         } else {
             this.item = 0;
             this.eof = false;
             this.found = true;
-            this.keyval = this.leaf.keyval[0];
+            this.name = this.leaf.name[0];
             this.recnum = this.leaf.recnum[0];
         }
         return (this.found);
@@ -195,19 +195,19 @@ class Btree {
     goBottom() {
         this.leaf = this.root;
         while (!this.leaf.isLeaf()) {
-            this.leaf = this.leaf.nodptr[this.leaf.nodptr.length - 1];
+            this.leaf = this.leaf.children[this.leaf.children.length - 1];
         }
-        if (this.leaf.keyval.length === 0) {
+        if (this.leaf.name.length === 0) {
             this.item = -1;
             this.eof = true;
             this.found = false;
-            this.keyval = '';
+            this.name = '';
             this.recnum = -1;
         } else {
-            this.item = this.leaf.keyval.length - 1;
+            this.item = this.leaf.name.length - 1;
             this.eof = false;
             this.found = true;
-            this.keyval = this.leaf.keyval[this.item];
+            this.name = this.leaf.name[this.item];
             this.recnum = this.leaf.recnum[this.item];
         }
         return (this.found);
@@ -225,10 +225,10 @@ class Btree {
         var parKey = [];
         var parNod = [];
         while (true) {
-            toN.keyval[toI] = frN.keyval[frI];
+            toN.name[toI] = frN.name[frI];
             toN.recnum[toI] = frN.recnum[frI];
             if (toI === 0) parNod.push(toN);
-            if (frI == frN.keyval.length - 1) {
+            if (frI == frN.name.length - 1) {
                 if (frN.nextLeaf === null) break;
                 frN = frN.nextLeaf;
                 frI = 0;
@@ -245,20 +245,20 @@ class Btree {
                 toI++;
             }
         }
-        var mov = this.minkyl - toN.keyval.length;
+        var mov = this.minkyl - toN.name.length;
         frN = toN.prevLeaf;
         if (mov > 0 && frN !== null) {
-            for (var i = toN.keyval.length - 1; i >= 0; i--) {
-                toN.keyval[i + mov] = toN.keyval[i];
+            for (var i = toN.name.length - 1; i >= 0; i--) {
+                toN.name[i + mov] = toN.name[i];
                 toN.recnum[i + mov] = toN.recnum[i];
             }
             for (var i = mov - 1; i >= 0; i--) {
-                toN.keyval[i] = frN.keyval.pop();
+                toN.name[i] = frN.name.pop();
                 toN.recnum[i] = frN.recnum.pop();
             }
         }
         for (i = 1, len = parNod.length; i < len; i++) {
-            parKey.push(parNod[i].keyval[0]);
+            parKey.push(parNod[i].name[0]);
         }
         parKey[parKey.length] = null;
 
@@ -276,24 +276,24 @@ class Btree {
                     toI = 0;
                     parNod.push(toN);
                 }
-                toN.keyval[toI] = kidKey[i];
-                toN.nodptr[toI] = kidNod[i];
+                toN.name[toI] = kidKey[i];
+                toN.children[toI] = kidNod[i];
                 toI++;
             }
-            mov = this.minkyn - toN.keyval.length + 1;
+            mov = this.minkyn - toN.name.length + 1;
             if (mov > 0 && parNod.length > 1) {
-                for (var i = toN.keyval.length - 1; i >= 0; i--) {
-                    toN.keyval[i + mov] = toN.keyval[i];
-                    toN.nodptr[i + mov] = toN.nodptr[i];
+                for (var i = toN.name.length - 1; i >= 0; i--) {
+                    toN.name[i + mov] = toN.name[i];
+                    toN.children[i + mov] = toN.children[i];
                 }
                 frN = parNod[parNod.length - 2];
                 for (var i = mov - 1; i >= 0; i--) {
-                    toN.keyval[i] = frN.keyval.pop();
-                    toN.nodptr[i] = frN.nodptr.pop();
+                    toN.name[i] = frN.name.pop();
+                    toN.children[i] = frN.children.pop();
                 }
             }
             for (var i = 0, len = parNod.length; i < len; i++) {
-                parKey.push(parNod[i].keyval.pop());
+                parKey.push(parNod[i].name.pop());
             }
         }
         this.root = parNod[0];

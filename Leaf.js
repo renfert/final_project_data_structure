@@ -1,6 +1,6 @@
 class Leaf {
     constructor() {
-        this.keyval = []
+        this.name = []
         this.recnum = []
         this.prevLeaf = null
         this.nextLeaf = null
@@ -11,7 +11,7 @@ class Leaf {
     }
 
     getItem(key, near) {
-        var vals = this.keyval;
+        var vals = this.name;
         if (near) {
             for (var i = 0, len = vals.length; i < len; i++) {
                 if (key <= vals[i]) return i;
@@ -25,7 +25,7 @@ class Leaf {
     }
 
     addKey(key, rec) {
-        var vals = this.keyval;
+        var vals = this.name;
         var itm = vals.length;
         for (var i = 0, len = itm; i < len; i++) {
             if (key === vals[i]) {
@@ -49,10 +49,10 @@ class Leaf {
     };
 
     split() {
-        var mov = Math.floor(this.keyval.length / 2);
+        var mov = Math.floor(this.name.length / 2);
         var newL = new Leaf();
         for (var i = mov - 1; i >= 0; i--) {
-            newL.keyval[i] = this.keyval.pop();
+            newL.name[i] = this.name.pop();
             newL.recnum[i] = this.recnum.pop();
         }
         newL.prevLeaf = this;
@@ -63,27 +63,27 @@ class Leaf {
     };
 
     merge(frNod, paNod, frKey) {
-        for (var i = 0, len = frNod.keyval.length; i < len; i++) {
-            this.keyval.push(frNod.keyval[i]);
+        for (var i = 0, len = frNod.name.length; i < len; i++) {
+            this.name.push(frNod.name[i]);
             this.recnum.push(frNod.recnum[i]);
         }
         this.nextLf = frNod.nextLf;
         if (frNod.nextLeaf !== null) frNod.nextLeaf.prevLeaf = this;
         frNod.prevLeaf = null;
         frNod.nextLeaf = null;
-        var itm = paNod.keyval.length - 1;
+        var itm = paNod.name.length - 1;
         for (var i = itm; i >= 0; i--) {
-            if (paNod.keyval[i] == frKey) {
+            if (paNod.name[i] == frKey) {
                 itm = i;
                 break;
             }
         }
-        for (var i = itm, len = paNod.keyval.length - 1; i < len; i++) {
-            paNod.keyval[i] = paNod.keyval[i + 1];
-            paNod.nodptr[i + 1] = paNod.nodptr[i + 2];
+        for (var i = itm, len = paNod.name.length - 1; i < len; i++) {
+            paNod.name[i] = paNod.name[i + 1];
+            paNod.children[i + 1] = paNod.children[i + 2];
         }
-        paNod.keyval.pop();
-        paNod.nodptr.pop();
+        paNod.name.pop();
+        paNod.children.pop();
     };
 
 }
