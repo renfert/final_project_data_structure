@@ -9,7 +9,6 @@
     <script src="Node.js"></script>
     <script src="Leaf.js"></script>
     <script src="Btree.js"></script>
-    <script src="Run.js"></script>
     <!-- load the d3.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 
@@ -24,18 +23,17 @@
                     <label for="act">Selection</label>
                     <select name="act" id="act" width="150" style="width:150px"
                         onchange="modAct(this.value)">
-                        <option value="bld">Build new tree</option>
+                        <option value="build">Build new tree</option>
                         <option value="add">Insert</option>
                         <option value="del">Delete</option>
                         <option value="seek">Seek</option>
                     </select>
                 </div>
-                <div class="formline"><label id="labl" for="num">Value</label><input name="num" id="num" size="5" maxlength="8" onkeypress="return enterToTab(this,event)" type="text"></div>
-                <div class="formline"><label>&nbsp;</label><input id="btn" class="btn" value="Go" onclick="runAct(document.actForm.act.value, document.actForm.num.value)" type="button"></div>
+                <div class="formline"><label id="labl" for="num">Value</label><input name="num" id="num" size="5" maxlength="8"  type="text"></div>
                 
             </div>
         </form>
-        <div class="formline"><button size="5" maxlength="8" onclick="test()" type="text">Test</button></div>
+        <div class="formline"><button size="5" maxlength="8" onclick="runAct(document.actForm.act.value, document.actForm.num.value)" type="text">Execute</button></div>
         <div id="canvas">
 
         </div>
@@ -47,29 +45,60 @@
 
     function run() {
         myTree = new Btree(3);
+        myTree.insert(1, '');
         myTree.insert(2, '');
         myTree.insert(5, '');
         myTree.insert(4, '');
         myTree.insert(11, '');
         myTree.insert(6, '');
-        myTree.insert(13, '');
-        myTree.insert(12, '');
-        myTree.insert(20, '');
-        myTree.insert(18, '');
-        myTree.insert(9, '');
-        myTree.insert(13, '');
-        myTree.insert(18, '');
+        myTree.insert(41, '');
+        
         
 
         
 
     }
     function test() {
-        console.log('TEST')
-        update(myTree.root);
+        let num = document.actForm.num.value 
+        myTree.insert(num, '')
+        update(myTree.root)
     }
 
     run()
+
+    function modAct(action) {
+        
+    }
+
+    function runAct(action, number){
+        switch(action){
+            case 'build':
+                myTree = new Btree(number);
+                console.log('build press')
+                update(myTree.root)
+                break
+            case 'add':
+                myTree.insert(number );
+                console.log('add press: ', number)
+                update(myTree.root)
+                break
+            case 'del':
+                myTree.remove(number );
+                console.log('remove press')
+                update(myTree.root)
+                break
+            case 'seek':
+                res = myTree.seek(number)
+                console.log('seek press: ', number)
+                console.log('seek result: ', res)
+                update(myTree.root)
+                break 
+                
+        }
+    }
+    
+    
+
    
 
 
@@ -93,7 +122,7 @@
     // update(myTree.root);
 
     function update(source) {
-        document.getElementById("canvas").innerHTML= "Paragraph changed!";
+        document.getElementById("canvas").innerHTML= "Graph Updated";
 
 
    
@@ -113,7 +142,7 @@
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        console.log('loading..')
+        
 
         // Compute the new tree layout.
         var nodes = tree.nodes(myTree.root).reverse(),
