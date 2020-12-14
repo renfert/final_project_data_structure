@@ -18,6 +18,7 @@ class Btree {
     insert(key, rec) {
         var stack = [];
         this.leaf = this.root;
+        // is node
         while (!this.leaf.isLeaf()) {
             stack.push(this.leaf);
             this.item = this.leaf.getItem(key);
