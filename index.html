@@ -34,6 +34,7 @@
             </div>
         </form>
         <div class="formline"><button size="5" maxlength="8" onclick="runAct(document.actForm.act.value, document.actForm.num.value)" type="text">Execute</button></div>
+        <div class="formline"><button size="5" maxlength="8" onclick="run()" type="text">Test</button></div>
         <div id="canvas">
 
         </div>
@@ -64,8 +65,6 @@
         update(myTree.root)
     }
 
-    run()
-
     function modAct(action) {
         
     }
@@ -73,38 +72,18 @@
     function runAct(action, number){
         switch(action){
             case 'build':
-                myTree = new Btree(number);
-                console.log('build press')
-                update(myTree.root)
+                myTree = new Btree(number);                              
                 break
             case 'add':
-                myTree.insert(number );
-                console.log('add press: ', number)
-                update(myTree.root)
+                myTree.insert(number );              
                 break
             case 'del':
-                myTree.remove(number );
-                console.log('remove press')
-                update(myTree.root)
-                break
-            case 'seek':
-                res = myTree.seek(number)
-                console.log('seek press: ', number)
-                console.log('seek result: ', res)
-                update(myTree.root)
-                break 
-                
+                myTree.remove(number );           
+                break    
         }
+        update(myTree.root)
     }
-    
-    
-
-   
-
-
-
-
-
+  
     // ************** Generate the tree diagram  *****************
    
     var margin = {

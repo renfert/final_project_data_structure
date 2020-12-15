@@ -62,28 +62,6 @@ class Leaf {
         return newL;
     };
 
-    merge(frNod, paNod, frKey) {
-        for (var i = 0, len = frNod.name.length; i < len; i++) {
-            this.name.push(frNod.name[i]);
-            this.recnum.push(frNod.recnum[i]);
-        }
-        this.nextLf = frNod.nextLf;
-        if (frNod.nextLeaf !== null) frNod.nextLeaf.prevLeaf = this;
-        frNod.prevLeaf = null;
-        frNod.nextLeaf = null;
-        var itm = paNod.name.length - 1;
-        for (var i = itm; i >= 0; i--) {
-            if (paNod.name[i] == frKey) {
-                itm = i;
-                break;
-            }
-        }
-        for (var i = itm, len = paNod.name.length - 1; i < len; i++) {
-            paNod.name[i] = paNod.name[i + 1];
-            paNod.children[i + 1] = paNod.children[i + 2];
-        }
-        paNod.name.pop();
-        paNod.children.pop();
-    };
+    
 
 }

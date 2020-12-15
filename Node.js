@@ -44,20 +44,5 @@ class Node {
         return newN;
     };
 
-    merge(frNod, paNod, paItm) {
-        var del = paNod.name[paItm];
-        this.name.push(del);
-        for (var i = 0, len = frNod.name.length; i < len; i++) {
-            this.name.push(frNod.name[i]);
-            this.children.push(frNod.children[i]);
-        }
-        this.children.push(frNod.children[frNod.children.length - 1]);
-        for (var i = paItm, len = paNod.name.length - 1; i < len; i++) {
-            paNod.name[i] = paNod.name[i + 1];
-            paNod.children[i + 1] = paNod.children[i + 2];
-        }
-        paNod.name.pop();
-        paNod.children.pop();
-        return del;
-    };
+    
 }

@@ -65,27 +65,7 @@ class Btree {
         return (!this.found);
     };
 
-    remove(key) {
-        if (typeof key == 'undefined') {
-            if (this.item === -1) {
-                this.eof = true;
-                this.found = false;
-                return false;
-            }
-            key = this.leaf.name[this.item];
-        }
-        this._del(key);
-        if (!this.found) {
-            this.item = -1;
-            this.eof = true;
-            this.name = '';
-            this.recnum = -1;
-        } else {
-            this.seek(key, true);
-            this.found = true;
-        }
-        return (this.found);
-    };
+    
 
     seek(key, near) {
         if (typeof near != 'boolean') near = false;
