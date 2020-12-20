@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Tejada Paz Renato">
+    <title>B+ Tree </title>
+
+    <script src="Node.js"></script>
+    <script src="Leaf.js"></script>
+    <script src="Btree.js"></script>
+    <!-- load the d3.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+
+<body>
+    <h1>B+ TREE!</h1>
+    <div id="content">
+
+        <h2>Action</h2>
+        <form name="actForm" id="actForm">
+            <div class="formbox">
+                <div class="formline">
+                    <label for="act">Selection</label>
+                    <select name="act" id="act" width="150" style="width:150px">
+                        <option value="build">Build new tree</option>
+                        <option value="add">Insert</option>
+                        <option value="seek">Seek</option>
+                    </select>
+                </div>
+                <div class="formline"><label id="labl" for="num">Value</label><input name="num" id="num" size="5" maxlength="8"  type="text"></div>
+                
+            </div>
+        </form>
+        <div class="formline"><button size="5" maxlength="8" onclick="runAct(document.actForm.act.value, document.actForm.num.value)" type="text">Execute</button></div>
+        <div class="formline"><button size="5" maxlength="8" onclick="run()" type="text">Test</button></div>
+        <div id="canvas">
+
+        </div>
+
+</body>
+
+<script>
+    var myTree;
+
+    function run() {
+        myTree = new Btree(3);
+        myTree.insert(1);
+        myTree.insert(2);
+        myTree.insert(15);
+        myTree.insert(4);
+        myTree.insert(11);
+        myTree.insert(6);
+        myTree.insert(21);
+        myTree.insert(9);
+        myTree.insert(41);
+        myTree.insert(15);
+        myTree.insert(23);
+        myTree.insert(41);
+        myTree.insert(18);
+        myTree.insert(8);
+        myTree.insert(7);
+        myTree.insert(19);
+        
+        update(myTree.root)
+
+        
+
+    }
+    
+  
+
+   
+    function runAct(action, number){
+        switch(action){
+            case 'build':
+                myTree = new Btree(number);                              
+                break
+            case 'add':
+                myTree.insert(parseInt(number ));              
+                break
+            case 'seek':
+                r = myTree.seek(parseInt(number ));  
+                alert(r);         
+                break    
+        }
+        update(myTree.root)
+    }
+  
+    // ************** Generate the tree diagram  *****************
+   
+    var margin = {
+            top: 40,
+            right: 120,
+            bottom: 20,
+            left: 120
+        },
+        width = 960 - margin.right - margin.left,
+        height = 500 - margin.top - margin.bottom;
+
+    var i = 0;
+    
+
+    // update(myTree.root);
+
+    function update(source) {
+        document.getElementById("canvas").innerHTML= "Graph Updated";
+
+
+   
+    
+
+    var tree = d3.layout.tree()
+        .size([height, width]);
+
+    var diagonal = d3.svg.diagonal()
+        .projection(function (d) {
+            return [d.x, d.y];
+        });
+
+    
+    var svg = d3.select("#canvas").append("svg")
+        .attr("width", width + margin.right + margin.left)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        
+
+        // Compute the new tree layout.
+        var nodes = tree.nodes(myTree.root).reverse(),
+            links = tree.links(nodes);
+
+        // Normalize for fixed-depth.
+        nodes.forEach(function (d) {
+            d.y = d.depth * 100;
+        });
+
+        // Declare the nodes…
+        var node = svg.selectAll("g.node")
+            .data(nodes, function (d) {
+                return d.id || (d.id = ++i);
+            });
+
+        // Enter the nodes.
+        var nodeEnter = node.enter().append("g")
+            .attr("class", "node")
+            .attr("transform", function (d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            });
+
+        nodeEnter.append("circle")
+            .attr("r", 10)
+            .style("fill", "#fff");
+
+        nodeEnter.append("text")
+            .attr("y", function (d) {
+                return d.children || d._children ? -18 : 18;
+            })
+            .attr("dy", ".35em")
+            .attr("text-anchor", "middle")
+            .text(function (d) {
+                return d.name;
+            })
+            .style("fill-opacity", 1);
+
+        // Declare the links…
+        var link = svg.selectAll("path.link")
+            .data(links, function (d) {
+                return d.target.id;
+            });
+
+        // Enter the links.
+        link.enter().insert("path", "g")
+            .attr("class", "link")
+            .attr("d", diagonal);
+
+    }
+</script>
+<style type="text/css">
+    .node circle {
+        fill: #fff;
+        stroke: steelblue;
+        stroke-width: 3px;
+    }
+
+    .node text {
+        font: 12px sans-serif;
+    }
+
+    .link {
+        fill: none;
+        stroke: #ccc124;
+        stroke-width: 2px;
+    }
+    #actForm {
+	margin: 5px 10px 10px 10px;}
+</style>
+
+</html>
