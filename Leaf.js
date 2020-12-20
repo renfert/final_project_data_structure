@@ -1,7 +1,6 @@
 class Leaf {
     constructor() {
         this.name = []
-        this.recnum = []
         this.prevLeaf = null
         this.nextLeaf = null
     }
@@ -24,7 +23,7 @@ class Leaf {
         return -1;
     }
 
-    addKey(key, rec) {
+    addKey(key) {
         var vals = this.name;
         var itm = vals.length;
         for (var i = 0, len = itm; i < len; i++) {
@@ -40,10 +39,10 @@ class Leaf {
         if (itm != -1) {
             for (var i = vals.length; i > itm; i--) {
                 vals[i] = vals[i - 1];
-                this.recnum[i] = this.recnum[i - 1];
+                
             }
             vals[itm] = key;
-            this.recnum[itm] = rec;
+            
         }
         return itm;
     };
@@ -52,8 +51,7 @@ class Leaf {
         var mov = Math.floor(this.name.length / 2);
         var newL = new Leaf();
         for (var i = mov - 1; i >= 0; i--) {
-            newL.name[i] = this.name.pop();
-            newL.recnum[i] = this.recnum.pop();
+            newL.name[i] = this.name.pop(); 
         }
         newL.prevLeaf = this;
         newL.nextLeaf = this.nextLeaf;

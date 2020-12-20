@@ -4,18 +4,17 @@
 class Btree {
     constructor(order) {
         this.root = new Leaf()
-        this.maxkey = order - 1
         this.leaf = null
-        this.item = -1
         this.name = ''
-        this.recnum = -1
+        this.item = -1
         this.length = 0
+        this.maxkey = order - 1
         this.eof = true
         this.found = false
 
     }
 
-    insert(key, rec) {
+    insert(key) {
         var stack = [];
         this.leaf = this.root;
         // is node
@@ -24,16 +23,15 @@ class Btree {
             this.item = this.leaf.getItem(key);
             this.leaf = this.leaf.children[this.item];
         }
-        this.item = this.leaf.addKey(key, rec);
+        this.item = this.leaf.addKey(key);
         this.name = key;
         this.eof = false;
         if (this.item === -1) {
             this.found = true;
             this.item = this.leaf.getItem(key, false);
-            this.recnum = this.leaf.recnum[this.item];
+            
         } else {
             this.found = false;
-            this.recnum = rec;
             this.length++;
             if (this.leaf.name.length > this.maxkey) {
                 var pL = this.leaf;
@@ -67,28 +65,24 @@ class Btree {
 
     
 
-    seek(key, near) {
-        if (typeof near != 'boolean') near = false;
+    seek(key) {
+        
         this.leaf = this.root;
         while (!this.leaf.isLeaf()) {
             this.item = this.leaf.getItem(key);
             this.leaf = this.leaf.children[this.item];
         }
-        this.item = this.leaf.getItem(key, near);
-        if (near && this.item == -1 && this.leaf.nextLeaf !== null) {
-            this.leaf = this.leaf.nextLeaf;
-            this.item = 0;
-        }
+        this.item = this.leaf.getItem(key, false);
+        
         if (this.item === -1) {
             this.eof = true;
             this.name = '';
             this.found = false;
-            this.recnum = -1;
+         
         } else {
             this.eof = false;
             this.found = (this.leaf.name[this.item] === key);
-            this.name = this.leaf.name[this.item];
-            this.recnum = this.leaf.recnum[this.item];
+            
         }
         return (!this.eof);
     };
